@@ -127,6 +127,8 @@ void createDirectory()
      {
           printf("Directory named {%s} could not be created\n", directoryName);
      }
+
+     addSpace();
 }
 
 // remove a sibling directory to the current working directory
@@ -146,6 +148,8 @@ void removeDirectory()
      {
           printf("Directory named {%s} could not be removed\n", directoryName);
      }
+
+     addSpace();
 }
 
 // get the current working directory
@@ -163,6 +167,8 @@ void getCurrentWorkingDirectory()
      {
           perror("getcwd() error");
      }
+
+     addSpace();
 }
 
 // change current working directory to one level up
@@ -182,6 +188,8 @@ void changeDirectoryOneLevelUp()
 
      // print the current working directory to confirm the change
      getCurrentWorkingDirectory();
+
+     addSpace();
 }
 
 // read contents of the directory
@@ -219,6 +227,8 @@ void readTheContentsOfTheDirectory()
      {
           printf("Directory not closed\n");
      }
+
+     addSpace();
 }
 
 // close the current working directory
@@ -239,4 +249,6 @@ void closeCurrentWorkingDirectory()
      {
           printf("Directory could not be closed");
      }
+
+     addSpace();
 }
