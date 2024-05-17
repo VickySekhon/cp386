@@ -28,8 +28,10 @@ int userWantsToChangeDirectoryOneLevelUp(const char userInput[]);
 int userWantsToReadTheContentsOfTheDirectory(const char userInput[]);
 int userWantsToCloseTheCurrentDirectory(const char userInput[]);
 
-// functions that perform the user's desired action
+// user menu with options to choose file system operations from
 void userMenu();
+
+// functions that perform the user's desired action
 void createDirectory();
 void removeDirectory();
 void getCurrentWorkingDirectory();
@@ -125,7 +127,7 @@ void createDirectory()
      {
           printf("Directory named {%s} could not be created\n", directoryName);
      }
-
+     
      addSpace();
 }
 
