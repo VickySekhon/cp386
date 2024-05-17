@@ -42,13 +42,11 @@ void addSpace();
 
 int main()
 {
-
      char userInput[10];
 
      // run indefinitely until the user enters 'q'
      while (1)
      {
-
           userMenu();
 
           scanf("%s", userInput);
