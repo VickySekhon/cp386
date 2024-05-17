@@ -168,6 +168,7 @@ void getCurrentWorkingDirectory()
 
      addSpace();
 }
+
 // change current working directory to one level up
 void changeDirectoryOneLevelUp()
 {
