@@ -1,7 +1,7 @@
 /*
  -------------------------------------
  File: directory.c
- Project: sekh4498_a01 
+ Project: sekh4498_a01, tegb0140_a01
  This file contains the functions that are used to create, delete, and list directories.
  -------------------------------------
  Author:  Vicky Sekhon, Yafet Tegbaru
@@ -30,12 +30,16 @@ int userWantsToReadTheContentsOfTheDirectory(const char userInput[]);
 int userWantsToCloseTheCurrentDirectory(const char userInput[]);
 
 // functions that perform the user's desired action
+void userMenu();
 void createDirectory();
 void removeDirectory();
 void getCurrentWorkingDirectory();
 void changeDirectoryOneLevelUp();
 void readTheContentsOfTheDirectory();
 void closeCurrentWorkingDirectory(); 
+
+// helper functions
+void addSpace();
 
 int main() {
 
@@ -44,22 +48,19 @@ int main() {
      // run indefinitely until the user enters 'q'
      while (1) {
 
-          printf("1. Create a directory\n");
-          printf("2. Remove a directory\n");
-          printf("3. Print current working directory\n");
-          printf("4. Change directory one level up\n");
-          printf("5. Read the contents of the directory\n");
-          printf("6. Close the current directory\n");
-          printf("q. Exit the program\n");
+          userMenu();
 
           scanf("%s", userInput);
 
           if (userWantsToCreateADirectory(userInput) == 0) {
                createDirectory();
+               addSpace();
           } else if (userWantsToRemoveADirectory(userInput) == 0) {
                removeDirectory();
+               addSpace();
           } else if (userWantsToGetCurrentWorkingDirectory(userInput) == 0) {
                getCurrentWorkingDirectory();
+               addSpace();
           } else if (userWantsToChangeDirectoryOneLevelUp(userInput) == 0) {
                changeDirectoryOneLevelUp();
           } else if (userWantsToReadTheContentsOfTheDirectory(userInput) == 0) {
@@ -84,12 +85,28 @@ int userWantsToReadTheContentsOfTheDirectory(const char userInput[]) { return st
 
 int userWantsToCloseTheCurrentDirectory(const char userInput[]) { return strcmp(userInput, "6"); }
 
-// create a directory
+void addSpace() { printf("\n"); }
+
+// user menu with options to choose file system operations from
+void userMenu() {
+     printf("1. Create a directory\n");
+     printf("2. Remove a directory\n");
+     printf("3. Print current working directory\n");
+     printf("4. Change directory one level up\n");
+     printf("5. Read the contents of the directory\n");
+     printf("6. Close the current directory\n");
+     printf("q. Exit the program\n");
+}
+
+// creates a sibling directory to the current working directory 
 void createDirectory() {
+
+     // get the name of the directory to create 
      char directoryName[100];
      printf("Directory name: ");
      scanf("%s", directoryName); 
 
+     // update the status of directory creation
      if (mkdir(directoryName) == 0) {
           printf("Directory named {%s} was created\n", directoryName);
      } else {
@@ -97,12 +114,15 @@ void createDirectory() {
      }
 }
 
-// remove a directory 
+// remove a sibling directory to the current working directory 
 void removeDirectory() {
+
+     // get the name of the directory to remove
      char directoryName[100];
      printf("Directory name: ");
      scanf("%s", directoryName); 
 
+     // update the status of directory removal
      if (rmdir(directoryName) == 0) {
           printf("Directory named {%s} was removed\n", directoryName);
      } else {
@@ -112,7 +132,11 @@ void removeDirectory() {
 
 // get the current working directory
 void getCurrentWorkingDirectory() {
+
+     // character array to store the current working directory
      char cwd[1024];
+
+     // update character array with current working directory, unless there is an error
      if (getcwd(cwd, sizeof(cwd)) != NULL) {
           printf("Current working directory is {%s}\n", cwd);
      } else {
@@ -120,9 +144,21 @@ void getCurrentWorkingDirectory() {
      }
 }
 
-// change directory one level up
+// change current working directory to one level up
 void changeDirectoryOneLevelUp() {
+
+     char cwd[1024];
+
+     // working directory is the root directory, so cannot move up
+     if (strcmp(getcwd(cwd, sizeof(cwd)), "C:\\") == 0) {
+          printf("Cannot move up from root directory\n");
+          return;
+     }
+
+     // move one directory up (same as 'cd ..' in the terminal) 
      chdir("..");
+
+     // print the current working directory to confirm the change
      getCurrentWorkingDirectory();
 }
 
@@ -132,6 +168,7 @@ void readTheContentsOfTheDirectory() {
      // open the current directory 
      DIR *workingDirectory = opendir(".");
 
+     // update the status of opening the directory
      if (workingDirectory == NULL) {
           printf("Directory not found\n");
      } else {
@@ -147,6 +184,7 @@ void readTheContentsOfTheDirectory() {
      // close the directory after reading its contents
      int check = closedir(workingDirectory);
 
+     // update the status of closing the directory
      if (check == 0) {
           printf("Directory closed\n");
      } else {
@@ -163,6 +201,7 @@ void closeCurrentWorkingDirectory() {
      // close it and get status
      int status = closedir(cwd);
 
+     // update the status of closing the directory
      if (status == 0) {
           printf("Directory was closed successfully");
      } else {
