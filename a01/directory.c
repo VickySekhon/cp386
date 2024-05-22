@@ -4,9 +4,9 @@
  Project: sekh4498_a01, tegb0140_a01
  This file contains the functions that are used to create, delete, and list directories.
  -------------------------------------
- Author:  Vicky Sekhon, Yafet Tegbaru
- ID:      169024498, 210480140
- Email:   sekh4498@mylaurier.ca, tegb0140@mylaurier.ca
+ Authors:  Vicky Sekhon, Yafet Tegbaru
+ IDs:      169024498, 210480140
+ Emails:   sekh4498@mylaurier.ca, tegb0140@mylaurier.ca
  Version  2024-05-16
  -------------------------------------
  */
