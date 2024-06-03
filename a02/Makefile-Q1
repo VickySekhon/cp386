@@ -1,0 +1,31 @@
+# Makefile for collatz_sequence.c
+
+# Compiler
+CC = gcc
+
+# Compiler Flags
+CFLAGS = -Wall -Wextra -std=c99
+
+# Executable Name
+TARGET = collatz_sequence
+
+# Source Files
+SRC = collatz_sequence.c
+
+# Default Target
+all: $(TARGET)
+
+# Build the target executable
+$(TARGET): $(SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRC) -lrt
+
+# Clean up build files
+clean:
+	rm -f $(TARGET) *.o
+
+# Run the program
+run:
+	./$(TARGET) start_numbers.txt
+
+# Phony targets
+.PHONY: all clean run

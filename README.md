@@ -1,3 +1,3 @@
-Code for Operating Systems, written in C. 
+Code for Operating Systems, written in C
 
-By Vicky Sekhon and Yafet Tegbaru. 
+By Vicky Sekhon and Yafet Tegbaru
