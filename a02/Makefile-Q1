@@ -19,7 +19,7 @@ all: $(TARGET)
 $(TARGET): $(SRC) # build collatz_sequence.exe from collatz_sequence.c 
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
 
-# Clean up build files (erases the executable and object files)
+# Clean up build files (erases the executable files)
 clean:
 	rm -f $(TARGET) *.o
 
