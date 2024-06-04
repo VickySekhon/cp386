@@ -4,7 +4,7 @@
  Project: sekh4498_a02, tegb0140_a02
 
  This file contains a program that uses a parent process
- to create and execute a child process which prints the collatz 
+ to create and execute a child process which prints the collatz
  sequence for a number read from the start_number.txt file.
  -------------------------------------
  Authors:  Vicky Sekhon, Yafet Tegbaru
@@ -22,20 +22,21 @@
 #include <fcntl.h>    // accesses file control options
 #include <sys/wait.h> // accesses waitpid function
 
-// define constants 
+// define constants
 
-#define SHM_NAME "/collatz_shm" // name of shared memory object
-#define MAX_SEQUENCE_LENGTH 1000 // maximum length of a generated collatz sequence
-#define ARRAY_SIZE 100 // maximum number of start numbers to generate collatz sequence for
+#define SHM_NAME "/collatz_shm"       // name of shared memory object
+#define MAX_SEQUENCE_LENGTH 1000      // maximum length of a generated collatz sequence
+#define ARRAY_SIZE 100                // maximum number of start numbers to generate collatz sequence for
 #define FILE_NAME "start_numbers.txt" // name of file to read start numbers from
 
 // function prototypes
 
 void createCollatzSequence(int, int *);
 int *createSharedMemoryObject();
+void handleChildProcess(int *);
 
 int main()
-{    
+{
      // open file to read start numbers from
      FILE *fp = fopen("start_numbers.txt", "r");
 
@@ -48,7 +49,7 @@ int main()
 
      // array to store start numbers
      int startNumbers[ARRAY_SIZE];
-     
+
      int index = 0;
 
      int num;
@@ -84,15 +85,7 @@ int main()
           else if (pid == 0)
           {
                printf("Child Process: The generated collatz sequence is ");
-               for (int j = 0; j < MAX_SEQUENCE_LENGTH; j++)
-               {
-                    if (sequence[j] == 1)
-                    {
-                         break;
-                    }
-                    printf("%d ", sequence[j]);
-               }
-               printf("1\n");
+               handleChildProcess(sequence);
                return 0;
           }
           // this is the parent process => wait for child process to finish executing
@@ -102,6 +95,24 @@ int main()
                wait(NULL);
           }
      }
+}
+
+void handleChildProcess(int *sequence)
+{
+     for (int j = 0; j < MAX_SEQUENCE_LENGTH; j++)
+     {
+          // end of collatz sequence is reached
+          if (sequence[j] == 1)
+          {
+               break;
+          }
+
+          // print the collatz sequence element by element
+          printf("%d ", sequence[j]);
+     }
+     
+     // last element of collatz sequence is 1
+     printf("1\n");
 }
 
 int *createSharedMemoryObject()
@@ -126,7 +137,7 @@ int *createSharedMemoryObject()
      if (sequence == MAP_FAILED)
      {
           printf("Error mapping shared memory\n");
-          exit(1); 
+          exit(1);
      }
 
      return sequence;
@@ -135,10 +146,10 @@ int *createSharedMemoryObject()
 void createCollatzSequence(int number, int *sequence)
 {
      int i = 0;
-     
+
      // generate collatz sequence until we reach 1 (end of sequence)
      while (number != 1)
-     {    
+     {
           // update the shared memory object array with the current number in the sequence
           sequence[i] = number;
 
