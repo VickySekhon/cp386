@@ -27,7 +27,7 @@
 #define SHM_NAME "/collatz_shm"       // name of shared memory object
 #define MAX_SEQUENCE_LENGTH 1000      // maximum length of a generated collatz sequence
 #define ARRAY_SIZE 100                // maximum number of start numbers to generate collatz sequence for
-#define FILE_NAME "start_numbers.txt" // name of file to read start numbers from
+#define COMMAND_LINE_PARAMETERS 2     // number of command line parameters
 
 // function prototypes
 
@@ -35,10 +35,16 @@ void createCollatzSequence(int, int *);
 int *createSharedMemoryObject();
 void handleChildProcess(int *);
 
-int main()
+int main(int argc, char *argv[])
 {
+     if (argc != COMMAND_LINE_PARAMETERS)
+     {
+          printf("Insufficient parameters passed.\n");
+          return 1; // abnormal termination
+     }
+
      // open file to read start numbers from
-     FILE *fp = fopen("start_numbers.txt", "r");
+     FILE *fp = fopen(argv[1], "r");
 
      // update status of opening file
      if (fp == NULL)
