@@ -22,3 +22,8 @@
 - child runs commands and writes them to pipe
 
 - parent reads from pipe and writes to screen using writeOutput()
+
+
+## logic put simply
+
+- 
