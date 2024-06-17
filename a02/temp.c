@@ -24,6 +24,7 @@ int collatz_sequence(int n) {
           } else {
                printf("%d, ", n);
           }
+         
 
      } 
      return n;
