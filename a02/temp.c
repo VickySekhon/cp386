@@ -18,14 +18,11 @@ int collatz_sequence(int n) {
           } else {
                n = 3*n + 1; 
           }
-
           if (n == 1) {
                printf("%d", n);
           } else {
                printf("%d, ", n);
           }
-
      } 
      return n;
 }
-
