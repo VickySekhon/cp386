@@ -1,7 +1,20 @@
 /*
  -------------------------------------
  File: fcfs.c
- Project: sekh4498_a01, tegb0140_a01
+
+ This program reads the Thread ID, Arrival Time, and Burst Time from a file and
+ "simulates" scheduling these algorithms based on the First Come First Serve (FCFS)
+ CPU scheduling algorithm. The threads in the file "sample_in_schedule.txt" are
+ non-preemptive to allow for the simulation of the FCFS algorithm.
+
+ The then program calculates the completion time, turn-around time, and waiting time
+ of the threads using the following formulas:
+
+  • Completion time = (Burst Time n) + (Burst Time n-1) + ... + (Burst Time 1)
+  • Turn-around time = Completion time - Arrival time
+  • Waiting time = Turn-around time - Burst Time
+
+ The average waiting time and turn-around times are then calculated.
  -------------------------------------
  Author:  Vicky Sekhon, Yafet Tegbaru
  ID:      169024498, 210480140
@@ -13,86 +26,140 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Structure to hold thread information
-typedef struct {
+// information associated with each thread
+typedef struct
+{
   int p_id;
-  int arr_time;
+  int arrival_time;
   int burst_time;
   int completion_time;
   int waiting_time;
   int turn_around_time;
-} threadinfo;
+} threadInformation;
 
-void read_schedule(const char *filename, threadinfo *threads, int *count) {
-  FILE *file = fopen(filename, "r");
-  if (file == NULL) {
-    perror("Unable to open file");
-    exit(EXIT_FAILURE);
-  }
+// function prototypes
 
-  *count = 0;
-  while (fscanf(file, "%d, %d, %d", &threads[*count].p_id,
-                &threads[*count].arr_time,
-                &threads[*count].burst_time) != EOF) {
-    (*count)++;
-  }
+void readSchedulingInformationFromFile(const char *filename, threadInformation *threads, int *count);
+float calculateCompletionTime(int currentTime, float burstTime);
+float calculateTurnAroundTime(float completionTime, float arrivalTime);
+float calculateWaitingTime(float turnAroundTime, float burstTime);
+void performIndividualCalculations(threadInformation *threads, int count);
+float calculateAverageWaitingTime(float totalWaitingTime, int count);
+float calculateAverageTurnAroundTime(float totalTurnaroundTime, int count);
+void performAveragesCalculations(threadInformation *threads, int count, float *avg_waiting_time, float *avg_turn_around_time);
+void printThreadTable(threadInformation *threads, int count);
 
-  fclose(file);
-}
+int main()
+{
+  threadInformation threads[100]; // create array to hold thread information (100 threads max)
 
-void calculate_times(threadinfo *threads, int count) {
-  int current_time = 0;
+  int count; // track number of threads in the file
 
-  for (int i = 0; i < count; i++) {
-    if (current_time < threads[i].arr_time) {
-      current_time = threads[i].arr_time;
-    }
-    threads[i].completion_time = current_time + threads[i].burst_time;
-    threads[i].turn_around_time =
-        threads[i].completion_time - threads[i].arr_time;
-    threads[i].waiting_time =
-        threads[i].turn_around_time - threads[i].burst_time;
-    current_time = threads[i].completion_time;
-  }
-}
+  float avg_waiting_time, avg_turn_around_time; // initialize average waiting and turn-around times
 
-void calculate_averages(threadinfo *threads, int count, float *avg_waiting_time,
-                        float *avg_turn_around_time) {
-  int total_waiting_time = 0;
-  int total_turn_around_time = 0;
+  readSchedulingInformationFromFile("sample_in_schedule.txt", threads, &count); // transfer thread information from file into array
 
-  for (int i = 0; i < count; i++) {
-    total_waiting_time += threads[i].waiting_time;
-    total_turn_around_time += threads[i].turn_around_time;
-  }
+  performIndividualCalculations(threads, count); // calculate completion time, turn-around time, and waiting time for each thread
 
-  *avg_waiting_time = (float)total_waiting_time / count;
-  *avg_turn_around_time = (float)total_turn_around_time / count;
-}
+  performAveragesCalculations(threads, count, &avg_waiting_time, &avg_turn_around_time); // calculate average waiting and turn-around times
 
-void print_thread_info(threadinfo *threads, int count) {
-  printf("Thread ID\tArrival Time\tBurst Time\tCompletion Time\tTurn-Around "
-         "Time\tWaiting Time\n");
-  for (int i = 0; i < count; i++) {
-    printf("%d\t\t%d\t\t%d\t\t%d\t\t%d\t\t\t%d\n", threads[i].p_id,
-           threads[i].arr_time, threads[i].burst_time,
-           threads[i].completion_time, threads[i].turn_around_time,
-           threads[i].waiting_time);
-  }
-}
+  printThreadTable(threads, count); // print the thread table
 
-int main() {
-  threadinfo threads[100];
-  int count;
-  float avg_waiting_time, avg_turn_around_time;
-
-  read_schedule("sample_in_schedule.txt", threads, &count);
-  calculate_times(threads, count);
-  calculate_averages(threads, count, &avg_waiting_time, &avg_turn_around_time);
-
-  print_thread_info(threads, count);
+  // display averages
   printf("The average waiting time: %.2f\n", avg_waiting_time);
   printf("The average turn-around time: %.2f\n", avg_turn_around_time);
 
   return 0;
+}
+
+void readSchedulingInformationFromFile(const char *filename, threadInformation *threads, int *count)
+{
+  FILE *file = fopen(filename, "r"); // open file for reading
+
+  if (file == NULL)
+  {
+    perror("Unable to open file");
+    exit(EXIT_FAILURE);
+  }
+
+  *count = 0; // tracks the total # of threads in the file
+
+  // read the thread ID, thread arrival time, and thread burst time from the file until end of file is reached
+  while (fscanf(file, "%d, %d, %d", &threads[*count].p_id, &threads[*count].arrival_time, &threads[*count].burst_time) != EOF)
+  {
+    (*count)++;
+  }
+
+  fclose(file); // close file after reading
+}
+
+float calculateCompletionTime(int currentTime, float burstTime)
+{
+  return currentTime + burstTime;
+}
+
+float calculateTurnAroundTime(float completionTime, float arrivalTime)
+{
+  return completionTime - arrivalTime;
+}
+
+float calculateWaitingTime(float turnAroundTime, float burstTime)
+{
+  return turnAroundTime - burstTime;
+}
+
+void performIndividualCalculations(threadInformation *threads, int count)
+{
+  int current_time = 0;
+
+  for (int i = 0; i < count; i++)
+  { // loop through each thread
+    threads[i].completion_time = calculateCompletionTime(current_time, threads[i].burst_time);
+    threads[i].turn_around_time = calculateTurnAroundTime(threads[i].completion_time, threads[i].arrival_time);
+    threads[i].waiting_time = calculateWaitingTime(threads[i].turn_around_time, threads[i].burst_time);
+
+    current_time = threads[i].completion_time; // update current time to the end of the current thread
+  }
+}
+
+float calculateAverageWaitingTime(float totalWaitingTime, int count)
+{
+  return totalWaitingTime / count;
+}
+
+float calculateAverageTurnAroundTime(float totalTurnaroundTime, int count)
+{
+  return totalTurnaroundTime / count;
+}
+
+void performAveragesCalculations(threadInformation *threads, int count, float *avg_waiting_time, float *avg_turn_around_time)
+{
+  int totalWaitingTime = 0;
+  int totalTurnaroundTime = 0;
+
+  // calculate the total waiting time and turn-around times
+  for (int i = 0; i < count; i++)
+  {
+    totalWaitingTime += threads[i].waiting_time;
+    totalTurnaroundTime += threads[i].turn_around_time;
+  }
+
+  *avg_waiting_time = calculateAverageWaitingTime((float)totalWaitingTime, count);
+  *avg_turn_around_time = calculateAverageTurnAroundTime((float)totalTurnaroundTime, count);
+}
+
+void printThreadTable(threadInformation *threads, int count)
+{
+
+  // header for the thread table
+  printf("Thread ID\tArrival Time\tBurst Time\tCompletion Time\tTurn-Around Time\t\tWaiting Time\n");
+
+  for (int i = 0; i < count; i++)
+  { // loop through each thread
+    printf("%d\t\t\t\t%d\t\t\t\t%d\t\t\t\t%d\t\t\t\t%d\t\t\t\t%d\n",
+           threads[i].p_id,
+           threads[i].arrival_time, threads[i].burst_time,
+           threads[i].completion_time, threads[i].turn_around_time,
+           threads[i].waiting_time);
+  }
 }
