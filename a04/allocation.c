@@ -37,13 +37,13 @@ Boolean compactionRequest(char[]);
 Boolean statusRequest(char[]);
 
 // checks
-Boolean validAlgorithmRequest(char[]);
+Boolean validAlgorithmRequest(char *);
 
 // memory management
-void initializeMemory(MemoryBlock *, int);
+void initializeMemory();
 
 // memory allocation
-Boolean handleAllocationRequest(MemoryBlock *, int, char[], int);
+Boolean handleAllocationRequest(char *, int);
 
 int main(int argc, char const *argv[])
 {
@@ -53,13 +53,9 @@ int main(int argc, char const *argv[])
      }
 
      // get memory size and convert it to int
-     int totalMemorySize = atoi(argv[1]);
-
-     // initialize memory with memory size
-     MemoryBlock memory;
-
-     initializeMemory(&memory, totalMemorySize);
-
+     memorySize = atoi(argv[1]);
+     initializeMemory();
+     
      char userInput[TOTAL_COMMAND_LENGTH]; 
 
      while (1) {
@@ -69,8 +65,6 @@ int main(int argc, char const *argv[])
           if (exitRequest(userInput)) {
                break;
           } else if (allocationRequest(userInput)) {
-               printf("Allocation request made.\n");
-
                char processID[BUFFER];
                int processSize;
                char algorithm[2];
@@ -79,8 +73,8 @@ int main(int argc, char const *argv[])
                sscanf(userInput, "RQ %s %d %s", processID, &processSize, algorithm);
 
                // selected "First Fit (F)" algorithm
-               if (validAlgorithmRequest(algorithm)) {
-                    handleAllocationRequest(&memory, totalMemorySize, processID, processSize);
+               if (strcmp(algorithm, "F") == 0) {
+                    handleAllocationRequest(processID, processSize);
                } else {
                     printf("Invalid allocation algorithm. Check input to ensure selected algorithm is First Fit (F).\n");
                }
@@ -117,29 +111,41 @@ Boolean statusRequest(char userRequest[]) {
      return strcmp(userRequest, "Status\n") == 0;
 }
 
-Boolean validAlgorithmRequest(char algorithm[]) {
+Boolean validAlgorithmRequest(char *algorithm) {
      return strcmp(algorithm, "F") == 0; // this program only supports the first fit contiguous allocation method
 }
 
-void initializeMemory(MemoryBlock *memory, int size) {
+void initializeMemory() {
      memory[0].start = 0;
-     memory[0].size = size;
+     memory[0].size = memorySize;
      memory[0].allocated = False; // memory is yet to be occupied
      strcpy(memory[0].processID, ""); // total block should have no name (can't release block)
 }
 
-Boolean handleAllocationRequest(MemoryBlock *blocks, int totalMemorySize, char processID[], int processSize) {
-    int i;
-    for (i = 0; i < totalMemorySize; i++) {
-        if (!blocks[i].allocated && blocks[i].size >= processSize) {
-            // Allocate memory
-            blocks[i].allocated = True;
-            strcpy(blocks[i].processID, processID);
-            blocks[i].size = processSize;
-            printf("Successfully allocated %d to process %s\n", processSize, processID);
-            return True;
+Boolean handleAllocationRequest(char *processID, int processSize) {
+    for (int i = 0; i < memorySize; i++)
+    {
+        if (!memory[i].allocated && memory[i].size >= processSize)
+        {
+          // Allocate memory
+          int start = memory[i].start;
+          if (memory[i].size > processSize)
+          {
+               // Create a new block for the remaining memory
+               memory[i + 1].start = start + processSize;
+               memory[i + 1].size = memory[i].size - processSize;
+               memory[i + 1].allocated = False;
+               strcpy(memory[i + 1].processID, "");
+          }
+          memory[i].size = processSize;
+          memory[i].allocated = True;
+          strcpy(memory[i].processID, processID);
+
+          printf("Successfully allocated %d to process %s\n", processSize, processID);
+          return True;
         }
     }
+
     printf("No hole of sufficient size\n");
     return False;
 }
