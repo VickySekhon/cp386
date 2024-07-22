@@ -5,7 +5,7 @@
 
  This project uses the First Fit Conti-
  -guous memory allocation algorithm to
- simulate an OS enviornment. Enjoy!
+ simulate OS resource allocation. 
  -------------------------------------
  Authors:  Vicky Sekhon, Yafet Tegbaru
  IDs:      169024498, 210480140
