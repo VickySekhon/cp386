@@ -1,6 +1,6 @@
 # Overview
 ## A01 - File System Manager Simulator:
-```directory.c``` - contains functions that are used to create, delete, and list directories.\n
+```directory.c``` - contains functions that are used to create, delete, and list directories.\
 ```filecopy.c``` - uses built-in POSIX libraries to copy contents of one file to another.
 
 ## A02 - Process Synchronization:
