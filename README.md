@@ -4,7 +4,7 @@
 ```filecopy.c``` - uses built-in POSIX libraries to copy contents of one file to another.
 
 ## A02 - Process Synchronization:
-```collatz_sequence.c``` - contains a program that uses a parent process to create and execute a child process which prints the collatz sequence for a number read from the start_number.txt file.
+```collatz_sequence.c``` - contains a program that uses a parent process to create and execute a child process which prints the collatz sequence for a number read from the start_number.txt file.\
 ```process_management.c``` - contains a program that uses multiple parent, child processes and a grandchild process which:
 
  1) write POSIX commands to a shared memory object
@@ -14,7 +14,7 @@
  5) writes the associated command and it's output to a file marked 'output.txt'
 
 ## A03 - Non-blocking Thread Creation:
-```sudoku.c``` - uses 11 individual threads to validate a 9x9 Sudoku puzzle based on it's rows, columns, and 3x3 subgrids.
+```sudoku.c``` - uses 11 individual threads to validate a 9x9 Sudoku puzzle based on it's rows, columns, and 3x3 subgrids.\
 ```fcfs.c``` - This program reads the Thread ID, Arrival Time, and Burst Time from a file and
 
 "simulates" scheduling these algorithms based on the First Come First Serve (FCFS)
